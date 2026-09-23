@@ -1,6 +1,19 @@
 # 一支笔画完中国史 · 极简国风全动态历史科普视频引擎 🖌️🇨🇳
 > **One-Pen Chinese History Explainer**: 0 模型成本 · 60fps 满帧丝滑 · 纯代码级矢量驱动的全自动短视频生成系统
 
+## 🎞️ 成品动态预览
+
+> 🔥 **商朝烤龟壳**：龟壳受热剧烈颤抖 + 裂纹逐条生长蹦字 ｜ 🏹 **三国草船借箭**：十万支飞箭连射插满船身
+
+<p align="center">
+  <img src="docs/preview_shang.gif" width="48%" alt="商朝甲骨文动态预览" />
+  <img src="docs/preview_sanguo.gif" width="48%" alt="三国草船借箭动态预览" />
+</p>
+
+<p align="center">
+  <b>📺 完整成片（3:18 / 1080P / 60fps）</b>：<a href="https://github.com/kany2000/one-pen-history/releases/download/v1.0.0/full_dynamic_cartoon_history.mp4">前往 Releases 下载 v1.0.0 成片</a>
+</p>
+
 <p align="center">
   <img src="dynamic_02_dayu_bubble.jpg" width="48%" alt="大禹治水加班狂" />
   <img src="dynamic_08_sanguo_arrow_bubble.jpg" width="48%" alt="三国草船借箭" />
