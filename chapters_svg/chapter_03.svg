@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  
+  <defs>
+    <radialGradient id="paper" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#faf6ee"/>
+      <stop offset="100%" stop-color="#ece4d2"/>
+    </radialGradient>
+    <filter id="ink-bleed">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#paper)"/>
+  <rect width="1920" height="1080" fill="none" stroke="#d5c8ad" stroke-width="24" opacity="0.4"/>
+  
+  <!-- 标题与印章 -->
+  <g transform="translate(100, 80)">
+    <rect x="0" y="0" width="130" height="42" rx="4" fill="#a63426"/>
+    <text x="65" y="28" font-family="SimSun, serif" font-size="20" font-weight="bold" fill="#ffffff" text-anchor="middle">约前1600</text>
+    <text x="160" y="38" font-family="SimSun, serif" font-size="52" font-weight="bold" fill="#2b261f">商</text>
+    <text x="240" y="38" font-family="SimSun, serif" font-size="26" fill="#7a6e5d">· 甲骨文 · 青铜器</text>
+  </g>
+
+  <!-- 地面墨线 -->
+  <path d="M 120 860 Q 600 855, 1100 862 T 1820 858" fill="none" stroke="#3a342a" stroke-width="5" stroke-linecap="round" filter="url(#ink-bleed)"/>
+
+  <!-- 左下角墨水团子 -->
+  <g transform="translate(260, 800)">
+    <ellipse cx="0" cy="0" rx="40" ry="36" fill="#2b261f" filter="url(#ink-bleed)"/>
+    <ellipse cx="-12" cy="-4" rx="5" ry="6" fill="#ffffff"/>
+    <ellipse cx="12" cy="-4" rx="5" ry="6" fill="#ffffff"/>
+    <circle cx="-11" cy="-4" r="2.5" fill="#000000"/>
+    <circle cx="13" cy="-4" r="2.5" fill="#000000"/>
+    <circle cx="-20" cy="8" r="6" fill="#e88574" opacity="0.6"/>
+    <circle cx="20" cy="8" r="6" fill="#e88574" opacity="0.6"/>
+    <line x1="28" y1="5" x2="60" y2="-48" stroke="#5c4a35" stroke-width="5" stroke-linecap="round"/>
+    <polygon points="58,-48 108,-32 55,-14" fill="#a63426"/>
+    <text x="72" y="-28" font-family="SimSun" font-size="16" fill="#ffffff" font-weight="bold">华</text>
+  </g>
+  
+  
+        <g transform="translate(960, 520)">
+          <!-- 大青铜鼎与火 -->
+          <g transform="translate(0, 150)">
+            <!-- 烈火 -->
+            <polygon points="-50,0 0,-70 50,0" fill="#e86a58"/>
+            <polygon points="-25,0 0,-45 25,0" fill="#fac170"/>
+            <rect x="-140" y="-30" width="280" height="24" fill="#3c594c"/>
+          </g>
+          <!-- 巨大龟甲 (裂纹与甲骨文) -->
+          <g transform="translate(0, -20)">
+            <ellipse cx="0" cy="0" rx="180" ry="140" fill="#d1b88e" stroke="#6e5737" stroke-width="8"/>
+            <!-- 龟甲裂缝 -->
+            <path d="M 0 -110 L 0 110 M -120 0 L 120 0 M -60 -60 L -10 -20 L -80 40 M 60 -60 L 20 -20 L 70 50" stroke="#423420" stroke-width="5" fill="none"/>
+            <!-- 甲骨文字符 -->
+            <text x="-90" y="-30" font-family="SimSun" font-size="42" font-weight="bold" fill="#a63426">日</text>
+            <text x="70" y="-30" font-family="SimSun" font-size="42" font-weight="bold" fill="#a63426">月</text>
+            <text x="-60" y="60" font-family="SimSun" font-size="42" font-weight="bold" fill="#a63426">雨</text>
+            <text x="50" y="60" font-family="SimSun" font-size="42" font-weight="bold" fill="#a63426">王</text>
+          </g>
+          <!-- 委屈哭泣的乌龟 -->
+          <g transform="translate(320, 90)">
+            <ellipse cx="0" cy="0" rx="35" ry="30" fill="#7ba385"/>
+            <text x="0" y="5" font-family="SimHei" font-size="22" fill="#ffffff" text-anchor="middle">呜呜</text>
+          </g>
+        </g>
+      
+  
+  <g transform="translate(960, 950)">
+    <rect x="-650" y="-45" width="1300" height="72" rx="36" fill="#24211d" opacity="0.90"/>
+    <text x="0" y="5" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="28" font-weight="bold" fill="#ffffff" text-anchor="middle">
+      商朝人遇事不决？烤龟壳！
+    </text>
+  </g>
+  </svg>
+  

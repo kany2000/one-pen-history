@@ -1,0 +1,89 @@
+<?svml using="@hypit/markup@1"?>
+<svml>
+  <!-- 《五千年：一支笔画完中国史》标准 Hypit 作者源 -->
+  <import as="chinese-history" from="@hypit/explainer-kit@1"/>
+  <import as="recipes" source="./reference.svs"/>
+
+  <script id="story">
+    <intro title="开卷">
+      <NARRATOR>@{anchor-intro!} 五千年，一支笔，画完中国史。
+    </intro>
+
+    <act-01-ancient title="上古 · 三皇五帝" seal="约前3000">
+      <NARRATOR>@{anchor-ancient!} 上古时代，炎帝和黄帝先打了一架，然后……握手成了一家人。从此我们都叫「炎黄子孙」。
+    </act-01-ancient>
+
+    <act-02-xia title="夏 · 大禹治水" seal="约前2070">
+      <NARRATOR>@{anchor-xia!} 大禹治水十三年，三过家门而不入……史上第一位有记载的「加班狂」。喜提王位。
+    </act-02-xia>
+
+    <act-03-shang title="商 · 甲骨文" seal="约前1600">
+      <NARRATOR>@{anchor-shang!} 商朝人遇事不决？烤龟壳！
+    </act-03-shang>
+
+    <act-04-zhou title="周 · 烽火戏诸侯" seal="前1046">
+      <NARRATOR>@{anchor-zhou!} 周朝定下礼乐规矩。可惜被幽王为博美人一笑点烽火戏诸侯——「聊死了」真实版，这周总算倒霉。
+    </act-04-zhou>
+
+    <act-05-warring-states title="春秋战国 · 百家争鸣" seal="前770">
+      <NARRATOR>@{anchor-warring!} 春秋战国：诸侯打成一锅粥，思想家却吵出了黄金时代。孔子、老子、韩非，各显神通。
+    </act-05-warring-states>
+
+    <act-06-qin title="秦 · 六一统" seal="前221">
+      <NARRATOR>@{anchor-qin!} 秦始皇统一六国：统一文字、统一货币，连车轮间距都要统一——强迫症的胜利。长城和兵马俑也安排上了。
+    </act-06-qin>
+
+    <act-07-han title="汉 · 丝绸之路" seal="前202">
+      <NARRATOR>@{anchor-han!} 汉朝，张骞出使西域，一趟出差十三年，顺手走出一条丝绸之路。「买买买」「吃货」狂喜，就从这儿来。
+    </act-07-han>
+
+    <act-08-sanguo title="三国 · 魏蜀吴" seal="220">
+      <NARRATOR>@{anchor-sanguo!} 三国：魏蜀吴三分天下。诸葛亮草船借箭，一口气借了十万支——一支都没还。
+    </act-08-sanguo>
+
+    <act-09-weijin title="魏晋南北朝 · 兰亭" seal="265">
+      <NARRATOR>@{anchor-weijin!} 魏晋南北朝：天下很乱，文人很飘。王羲之爱写字也爱养鹅，一篇《兰亭序》火了一千多年。
+    </act-09-weijin>
+
+    <act-10-sui title="隋 · 大运河" seal="581">
+      <NARRATOR>@{anchor-sui!} 隋朝只存在了38年，却干了两件大事：挖通大运河，开创科举——普通人也能靠读书改命了。
+    </act-10-sui>
+
+    <act-11-tang title="唐 · 盛世大唐" seal="618">
+      <NARRATOR>@{anchor-tang!} 大唐盛世！长安是国际大都市，万国来朝。李白喝醉看明月——诗写得好，酒量更有长进。
+    </act-11-tang>
+
+    <act-12-song title="宋 · 科技美食" seal="960">
+      <NARRATOR>@{anchor-song!} 宋朝经济文化全面开花：活字印刷、指南针、火药全就位。苏东坡更忙，一边被贬一边发明东坡肉。
+    </act-12-song>
+
+    <act-13-yuan title="元 · 蒙古铁骑" seal="1271">
+      <NARRATOR>@{anchor-yuan!} 元朝：蒙古铁骑一路狂奔，版图大到地图都快装不下。意大利人马可·波罗来旅游，回去写了本畅销日记。
+    </act-13-yuan>
+
+    <act-14-ming title="明 · 郑和下西洋" seal="1368">
+      <NARRATOR>@{anchor-ming!} 明朝：郑和七下西洋，传说中的宝船比八十年后哥伦布的旗舰大得多。
+    </act-14-ming>
+
+    <act-15-qing title="清 · 盛世到近代" seal="1644">
+      <NARRATOR>@{anchor-qing!} 清朝：康乾盛世，人口破三亿……可惜到了1840年，列强的战舰开到了家门口，近代屈辱史开始了。
+    </act-15-qing>
+
+    <act-16-xinhai title="辛亥 · 帝制落幕" seal="1911">
+      <NARRATOR>@{anchor-xinhai!} 1911年辛亥革命，剪掉辫子，建立中华民国——两千多年的皇帝制度正式画上句号！
+    </act-16-xinhai>
+
+    <act-17-prc title="新中国 · 开国大典" seal="1949">
+      <NARRATOR>@{anchor-prc!} 1949年，中华人民共和国成立。一步一个脚印，日子越过越红火。
+    </act-17-prc>
+
+    <act-18-today title="今天 · 伟大复兴" seal="现在">
+      <NARRATOR>@{anchor-today!} 如今，高铁如飞驰、火箭排着队上天——当年的九天揽月与丝绸之路，如今已变成了现实！
+    </act-18-today>
+  </script>
+
+  <canvas id="screen" width="1920" height="1080" fps="30"/>
+
+  <!-- 视听轨道绑定 -->
+  <timeline:Track id="mascot-track" src="./evidence/scenes/01_intro.jpg"/>
+</svml>

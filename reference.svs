@@ -1,0 +1,18 @@
+<?svml using="@hypit/svs@1"?>
+<sheet version="1">
+explainer.theme.paper {
+  background: "#f2efe6";
+  line-color: "#181816";
+  seal-bg: "#a82e2e";
+  seal-text: "#ffffff";
+  title-font: "SimSun", "Noto Serif SC", serif;
+  caption-font: "SimHei", "Microsoft YaHei", sans-serif;
+}
+
+explainer.cinematic.parallax {
+  aspect-ratio: "2.39:1";
+  vignette-strength: 0.25;
+  zoom-rate: 0.00045;
+  drum-base-hz: 50;
+}
+</sheet>

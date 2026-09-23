@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { margin: 0; padding: 0; background: #faf6ee; overflow: hidden; }
+  canvas { display: block; width: 1920px; height: 1080px; }
+</style>
+</head>
+<body>
+<canvas id="cvs" width="1920" height="1080"></canvas>
+<script>
+const cvs = document.getElementById('cvs');
+const ctx = cvs.getContext('2d');
+
+// 19 篇章元数据
+const chapters = [
+  { index: 0, start: 0.0, end: 3.51, era: "片头", title: "五千年", desc: "一支笔，画完中国史" },
+  { index: 1, start: 3.51, end: 14.43, era: "约前3000", title: "上古 · 三皇五帝", desc: "上古时代，炎帝和黄帝先打了一架，然后……握手成了一家人。从此我们都叫「炎黄子孙」。" },
+  { index: 2, start: 14.43, end: 24.22, era: "约前2070", title: "夏 · 大禹治水", desc: "大禹治水十三年，三过家门而不入……史上第一位有记载的「加班狂」。喜提王位。" },
+  { index: 3, start: 24.22, end: 28.84, era: "约前1600", title: "商 · 甲骨文 · 青铜器", desc: "商朝人遇事不决？烤龟壳！看裂纹定吉凶，刻下的字就是最早的成熟汉字——甲骨文。" },
+  { index: 4, start: 28.84, end: 40.23, era: "前1046", title: "周 · 礼乐 · 烽火戏诸侯", desc: "周朝定下礼乐规矩。可惜被幽王为博美人一笑点烽火戏诸侯——「聊死了」真实版，这周总算倒霉。" },
+  { index: 5, start: 40.23, end: 51.89, era: "前770", title: "春秋战国 · 百家争鸣", desc: "春秋战国：诸侯打成一锅粥，思想家却吵出了黄金时代。孔子、老子、韩非，各显神通。" },
+  { index: 6, start: 51.89, end: 64.98, era: "前221", title: "秦 · 六一统", desc: "秦始皇统一六国：统一文字、统一货币，连车轮间距都要统一——强迫症的胜利。长城和兵马俑也安排上了。" },
+  { index: 7, start: 64.98, end: 77.42, era: "前202", title: "汉 · 丝绸之路", desc: "汉朝，张骞出使西域，一趟出差十三年，顺手走出一条丝绸之路。「买买买」「吃货」狂喜，就从这儿来。" },
+  { index: 8, start: 77.42, end: 87.6, era: "220", title: "三国 · 魏 · 蜀 · 吴", desc: "三国：魏蜀吴三分天下。诸葛亮草船借箭，一口气借了十万支——一支都没还。" },
+  { index: 9, start: 87.6, end: 98.84, era: "265", title: "魏晋南北朝 · 书法 · 兰亭", desc: "魏晋南北朝：天下很乱，文人很飘。王羲之爱写字也爱养鹅，一篇《兰亭序》火了一千多年。" },
+  { index: 10, start: 98.84, end: 110.17, era: "581", title: "隋 · 大运河", desc: "隋朝只存在了38年，却干了两件大事：挖通大运河，开创科举——普通人也能靠读书改命了。" },
+  { index: 11, start: 110.17, end: 121.99, era: "618", title: "唐 · 盛世大唐", desc: "大唐盛世！长安是国际大都市，万国来朝。李白喝醉看明月——诗写得好，酒量更有长进。" },
+  { index: 12, start: 121.99, end: 134.71, era: "960", title: "宋 · 东坡 · 发明", desc: "宋朝经济文化全面开花：活字印刷、指南针、火药全就位。苏东坡更忙，一边被贬一边发明东坡肉。" },
+  { index: 13, start: 134.71, end: 147.33, era: "1271", title: "元 · 蒙古铁骑", desc: "元朝：蒙古铁骑一路狂奔，版图大到地图都快装不下。意大利人马可·波罗来旅游，回去写了本畅销日记。" },
+  { index: 14, start: 147.33, end: 155.78, era: "1368", title: "明 · 郑和下西洋", desc: "明朝：郑和七下西洋，传说中的宝船比八十年后哥伦布的旗舰大得多。" },
+  { index: 15, start: 155.78, end: 168.32, era: "1644", title: "清 · 康乾盛世 -> 1840", desc: "清朝：康乾盛世，人口破三亿……可惜到了1840年，列强的战舰开到了家门口，近代屈辱史开始了。" },
+  { index: 16, start: 168.32, end: 178.33, era: "1911", title: "辛亥 · 帝制落幕", desc: "1911年辛亥革命，剪掉辫子，建立中华民国——两千多年的皇帝制度正式画上句号！" },
+  { index: 17, start: 178.33, end: 187.25, era: "1949", title: "新中国 · 开国大典", desc: "1949年，中华人民共和国成立。一步一个脚印，日子越过越红火。" },
+  { index: 18, start: 187.25, end: 198.0, era: "现在", title: "今天 · 高铁 · 航天", desc: "如今，高铁如飞驰、火箭排着队上天——当年的九天揽月与丝绸之路，如今已变成了现实！" }
+];
+
+// 辅助：绘制气泡
+function drawBubble(x, y, text, isMascot = false, scale = 1.0) {
+  if (scale <= 0.01) return;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
+  ctx.fillStyle = '#ffffff';
+  ctx.strokeStyle = '#2b261f';
+  ctx.lineWidth = 3;
+  ctx.font = 'bold 22px SimHei, sans-serif';
+  const tw = ctx.measureText(text).width;
+  const bw = Math.max(140, tw + 40);
+  ctx.beginPath();
+  ctx.roundRect(-bw/2, -45, bw, 60, 20);
+  ctx.fill();
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(-10, 15); ctx.lineTo(10, 15); ctx.lineTo(0, 32);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = isMascot ? '#a63426' : '#2b261f';
+  ctx.textAlign = 'center';
+  ctx.fillText(text, 0, -10);
+  ctx.restore();
+}
+
+window.renderGlobalFrame = function(globalT) {
+  ctx.clearRect(0, 0, 1920, 1080);
+
+  // 定位当前篇章
+  let ch = chapters[chapters.length - 1];
+  for (let c of chapters) {
+    if (globalT >= c.start && globalT < c.end) {
+      ch = c;
+      break;
+    }
+  }
+
+  const localT = Math.max(0, globalT - ch.start);
+  const chDur = ch.end - ch.start;
+
+  // 1. 米黄色宣纸底色
+  const bgGrad = ctx.createRadialGradient(960, 540, 200, 960, 540, 1100);
+  bgGrad.addColorStop(0, '#faf6ee');
+  bgGrad.addColorStop(1, '#ece4d2');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, 1920, 1080);
+  ctx.strokeStyle = '#d5c8ad';
+  ctx.lineWidth = 20;
+  ctx.strokeRect(10, 10, 1900, 1060);
+
+  // 2. 左上角朱砂印章与标题
+  ctx.save();
+  ctx.translate(100, 80);
+  ctx.fillStyle = '#a63426';
+  ctx.beginPath();
+  const sealW = ch.era.length > 4 ? 125 : 100;
+  ctx.roundRect(0, 0, sealW, 42, 4);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 20px SimSun, serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(ch.era, sealW / 2, 28);
+  ctx.fillStyle = '#2b261f';
+  ctx.font = 'bold 52px SimSun, serif';
+  ctx.textAlign = 'left';
+  const mainTitle = ch.title.split('·')[0].trim();
+  const subTitle = ch.title.includes('·') ? '· ' + ch.title.split('·').slice(1).join('·').trim() : '';
+  ctx.fillText(mainTitle, sealW + 30, 38);
+  ctx.fillStyle = '#7a6e5d';
+  ctx.font = '24px SimSun, serif';
+  ctx.fillText(subTitle, sealW + 30 + ctx.measureText(mainTitle).width + 15, 38);
+  ctx.restore();
+
+  // 3. 地面水墨延伸横线
+  ctx.save();
+  ctx.strokeStyle = '#3a342a';
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(100, 840);
+  ctx.quadraticCurveTo(600, 836, 1100, 842);
+  ctx.quadraticCurveTo(1500, 838, 1820, 840);
+  ctx.stroke();
+  ctx.restore();
+
+  // 4. 左下角常驻小墨水团子 (视线锚点吉祥物)
+  ctx.save();
+  const mascotJump = Math.abs(Math.sin(globalT * 6)) * 14;
+  ctx.translate(260, 810 - mascotJump);
+  ctx.fillStyle = '#2b261f';
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 42, 38, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(-14, -6, 7, 0, Math.PI * 2);
+  ctx.arc(14, -6, 7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#000000';
+  ctx.beginPath();
+  ctx.arc(-13, -6, 3, 0, Math.PI * 2);
+  ctx.arc(15, -6, 3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#e88574';
+  ctx.beginPath();
+  ctx.arc(-22, 6, 7, 0, Math.PI * 2);
+  ctx.arc(22, 6, 7, 0, Math.PI * 2);
+  ctx.fill();
+  // 小黑手挥舞
+  ctx.strokeStyle = '#2b261f';
+  ctx.lineWidth = 5;
+  ctx.lineCap = 'round';
+  const armMove = Math.sin(globalT * 10) * 15;
+  ctx.beginPath();
+  ctx.moveTo(-35, 5); ctx.lineTo(-55, -15 + armMove);
+  ctx.moveTo(35, 5); ctx.lineTo(55, -15 - armMove);
+  ctx.stroke();
+  ctx.restore();
+
+  // 5. 各篇章专属的核心动画与气泡交互
+  const cx = 960, cy = 520;
+
+  switch(ch.index) {
+    case 0: // 片头
+      ctx.save();
+      ctx.translate(cx, cy);
+      const titlePop = Math.min(1.0, localT * 2);
+      ctx.scale(titlePop, titlePop);
+      ctx.fillStyle = '#2b261f';
+      ctx.font = 'bold 88px SimSun, serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('五千年', 0, -40);
+      ctx.fillStyle = '#a63426';
+      ctx.font = '38px SimSun, serif';
+      ctx.fillText('一支笔 · 画完中国史', 0, 50);
+      ctx.restore();
+      break;
+
+    case 1: // 上古 炎黄牵手
+      ctx.save();
+      ctx.translate(cx, cy);
+      // 太阳升起
+      const sunY = -180 + Math.sin(localT * 2) * 8;
+      ctx.fillStyle = '#e26d5c';
+      ctx.beginPath();
+      ctx.arc(320, sunY, 65, 0, Math.PI * 2);
+      ctx.fill();
+      // 炎帝与黄帝
+      const yhWalk = Math.sin(localT * 4) * 6;
+      // 炎帝
+      ctx.fillStyle = '#a63426';
+      ctx.beginPath(); ctx.ellipse(-160, 120 + yhWalk, 60, 75, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fcecd4';
+      ctx.beginPath(); ctx.ellipse(-160, 20 + yhWalk, 45, 42, 0, 0, Math.PI * 2); ctx.fill();
+      // 黄帝
+      ctx.fillStyle = '#d4a34b';
+      ctx.beginPath(); ctx.ellipse(160, 120 - yhWalk, 60, 75, 0, 0, Math.PI * 2); ctx.fill();
+      ctx.fillStyle = '#fcecd4';
+      ctx.beginPath(); ctx.ellipse(160, 20 - yhWalk, 45, 42, 0, 0, Math.PI * 2); ctx.fill();
+      // 手牵手红线
+      ctx.strokeStyle = '#d4a34b'; ctx.lineWidth = 14; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-110, 130); ctx.lineTo(110, 130); ctx.stroke();
+      // 心形动画 (2.5s 后心跳膨胀)
+      if (localT > 2.5) {
+        const heartPulse = 1.0 + Math.sin((localT - 2.5) * 6) * 0.15;
+        ctx.save();
+        ctx.translate(0, -10);
+        ctx.scale(heartPulse, heartPulse);
+        ctx.fillStyle = '#e26d5c';
+        ctx.beginPath();
+        ctx.moveTo(0, 20); ctx.bezierCurveTo(-40, -40, -80, 20, 0, 80);
+        ctx.bezierCurveTo(80, 20, 40, -40, 0, 20);
+        ctx.fill();
+        ctx.restore();
+      }
+      ctx.restore();
+      // 吐槽气泡 (4.5s 炎黄; 7.0s 墨水团子)
+      if (localT > 4.5) drawBubble(820, 430, '打完握手：以后都是一家人！', false, Math.min(1.0, (localT - 4.5)*4));
+      if (localT > 7.0) drawBubble(260, 680, '炎黄子孙报到！', true, Math.min(1.0, (localT - 7.0)*4));
+      break;
+
+    case 2: // 夏 大禹治水
+      ctx.save();
+      ctx.translate(cx, cy);
+      // 茅草屋
+      ctx.fillStyle = '#c49a56'; ctx.fillRect(-380, 60, 150, 140);
+      ctx.fillStyle = '#d9ad67';
+      ctx.beginPath(); ctx.moveTo(-305, -50); ctx.lineTo(-420, 60); ctx.lineTo(-190, 60); ctx.closePath(); ctx.fill();
+      // 妻子
+      ctx.fillStyle = '#fcecd4'; ctx.beginPath(); ctx.arc(-240, 120, 25, 0, Math.PI*2); ctx.fill();
+      // 大禹大步走扛石铲
+      const yuWalk = (localT * 35) % 180;
+      ctx.save();
+      ctx.translate(yuWalk - 40, 50);
+      ctx.fillStyle = '#698572'; ctx.beginPath(); ctx.ellipse(0, 110, 55, 70, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#fcecd4'; ctx.beginPath(); ctx.arc(0, 25, 38, 0, Math.PI*2); ctx.fill();
+      // 斗笠
+      ctx.fillStyle = '#bfa16b'; ctx.beginPath(); ctx.moveTo(0, -30); ctx.lineTo(-60, 10); ctx.lineTo(60, 10); ctx.closePath(); ctx.fill();
+      // 扛着石铲
+      ctx.strokeStyle = '#705b41'; ctx.lineWidth = 12; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-80, 160); ctx.lineTo(70, -25); ctx.stroke();
+      ctx.fillStyle = '#807a73'; ctx.fillRect(50, -50, 40, 45);
+      ctx.restore();
+      ctx.restore();
+      // 气泡
+      if (localT > 2.0) drawBubble(720, 480, '妻子：又不回家吃饭？！', false, Math.min(1.0, (localT - 2.0)*4));
+      if (localT > 5.0) drawBubble(1180, 460, '大禹：治水呢，加个班！', false, Math.min(1.0, (localT - 5.0)*4));
+      if (localT > 7.5) drawBubble(260, 680, '史上第一加班狂喜提王位！', true, Math.min(1.0, (localT - 7.5)*4));
+      break;
+
+    case 3: // 商 烤龟壳
+      ctx.save();
+      ctx.translate(cx, cy);
+      // 火苗跳动
+      const flameH = 65 + Math.sin(localT * 16) * 14;
+      ctx.fillStyle = '#d9432f';
+      ctx.beginPath(); ctx.moveTo(-45, 260); ctx.quadraticCurveTo(-15, 260-flameH, 0, 260-flameH*1.2); ctx.quadraticCurveTo(15, 260-flameH, 45, 260); ctx.fill();
+      ctx.fillStyle = '#f5a623';
+      ctx.beginPath(); ctx.moveTo(-25, 260); ctx.quadraticCurveTo(0, 260-flameH*0.7, 25, 260); ctx.fill();
+      // 龟壳颤抖
+      const turtleShake = (localT > 1.0) ? Math.sin(localT * 35) * 3 : 0;
+      ctx.translate(turtleShake, turtleShake);
+      ctx.fillStyle = '#dfcfb2'; ctx.strokeStyle = '#423420'; ctx.lineWidth = 6;
+      ctx.beginPath(); ctx.ellipse(0, 40, 150, 200, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+      // 龟壳网格
+      ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(0, -160); ctx.lineTo(0, 240); ctx.moveTo(-140, -30); ctx.lineTo(140, -30); ctx.moveTo(-150, 100); ctx.lineTo(150, 100); ctx.stroke();
+      // 裂纹生长
+      if (localT > 2.0) {
+        ctx.strokeStyle = '#992211'; ctx.lineWidth = 4;
+        ctx.beginPath(); ctx.moveTo(-10, -50); ctx.lineTo(25, -10); ctx.lineTo(10, 60); ctx.lineTo(50, 120); ctx.stroke();
+      }
+      // 甲骨文字弹出
+      if (localT > 2.2) {
+        ctx.fillStyle = '#2b261f'; ctx.font = 'bold 46px SimSun, serif'; ctx.textAlign = 'center';
+        ctx.fillText('日', -70, -70);
+        if (localT > 2.6) ctx.fillText('人', 70, -70);
+        if (localT > 3.0) ctx.fillText('王', -70, 50);
+        if (localT > 3.4) ctx.fillText('田', 70, 50);
+      }
+      ctx.restore();
+      // 爬行小乌龟
+      const crawlX = Math.max(1360, 1550 - localT * 40);
+      ctx.save();
+      ctx.translate(crawlX, 810);
+      ctx.fillStyle = '#688e73'; ctx.beginPath(); ctx.arc(0, 0, 45, Math.PI, 0); ctx.fill();
+      ctx.fillStyle = '#89b395'; ctx.beginPath(); ctx.arc(50, -5, 18, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#4a90e2'; ctx.beginPath(); ctx.ellipse(65, -15, 5, 8, Math.PI/4, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+      if (localT > 1.8) drawBubble(crawlX, 690, '我做错了什么？！', false, Math.min(1.0, (localT - 1.8)*4));
+      if (localT > 2.5) drawBubble(260, 680, '龟龟：我太难了！', true, Math.min(1.0, (localT - 2.5)*4));
+      break;
+
+    case 4: // 周 烽火戏诸侯
+      ctx.save();
+      ctx.translate(cx, cy);
+      // 烽火台浓烟
+      ctx.fillStyle = '#8c8270'; ctx.fillRect(-320, 60, 160, 180);
+      const smokeY = (localT * 30) % 120;
+      ctx.fillStyle = '#3a3731';
+      ctx.beginPath(); ctx.arc(-240, -20 - smokeY, 45, 0, Math.PI*2); ctx.fill();
+      ctx.beginPath(); ctx.arc(-210, -70 - smokeY, 60, 0, Math.PI*2); ctx.fill();
+      // 幽王与褒姒
+      const laughJump = Math.abs(Math.sin(localT * 8)) * 10;
+      ctx.save();
+      ctx.translate(140, 60 - laughJump);
+      ctx.fillStyle = '#a63426'; ctx.beginPath(); ctx.ellipse(-40, 100, 55, 70, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#fcecd4'; ctx.beginPath(); ctx.arc(-40, 20, 38, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#d9758f'; ctx.beginPath(); ctx.ellipse(45, 100, 50, 65, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#fcecd4'; ctx.beginPath(); ctx.arc(45, 25, 34, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+      ctx.restore();
+      if (localT > 2.5) drawBubble(1100, 480, '幽王：哈哈！博美人一笑了！', false, Math.min(1.0, (localT - 2.5)*4));
+      if (localT > 5.5) drawBubble(640, 720, '诸侯：耍猴呢？！真把天聊死了！', false, Math.min(1.0, (localT - 5.5)*4));
+      if (localT > 8.0) drawBubble(260, 680, '这周总算倒霉了...', true, Math.min(1.0, (localT - 8.0)*4));
+      break;
+
+    case 5: // 春秋战国 百家争鸣
+      ctx.save();
+      ctx.translate(cx, cy);
+      const debaters = [
+        { name: '孔子', text: '仁！', color: '#588b76', x: -360 },
+        { name: '老子', text: '无为~', color: '#829ab1', x: -120 },
+        { name: '墨子', text: '兼爱！', color: '#a67c52', x: 120 },
+        { name: '韩非', text: '法！', color: '#2b261f', x: 360 }
+      ];
+      debaters.forEach((d, idx) => {
+        const argueBounce = Math.sin(localT * 8 + idx) * 8;
+        ctx.save();
+        ctx.translate(d.x, 80 + argueBounce);
+        ctx.fillStyle = d.color; ctx.beginPath(); ctx.ellipse(0, 80, 48, 65, 0, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#fcecd4'; ctx.beginPath(); ctx.arc(0, 15, 35, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = d.color; ctx.font = 'bold 24px SimHei'; ctx.textAlign = 'center';
+        ctx.fillText(d.name, 0, 180);
+        ctx.restore();
+        // 吵架气泡逐个冒出
+        if (localT > 1.5 + idx * 1.2) {
+          drawBubble(cx + d.x, 480, d.text, false, Math.min(1.0, (localT - (1.5 + idx * 1.2))*4));
+        }
+      });
+      ctx.restore();
+      if (localT > 7.5) drawBubble(260, 680, '吵出了思想黄金时代！', true, Math.min(1.0, (localT - 7.5)*4));
+      break;
+
+    case 6: // 秦 六一统
+      ctx.save();
+      ctx.translate(cx, cy);
+      // 秦始皇呼吸微动
+      const qinBreath = Math.sin(localT * 3) * 6;
+      ctx.save();
+      ctx.translate(0, 50 + qinBreath);
+      ctx.fillStyle = '#24211d'; ctx.beginPath(); ctx.ellipse(0, 120, 70, 85, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#a63426'; ctx.beginPath(); ctx.moveTo(-40, 80); ctx.lineTo(0, 140); ctx.lineTo(40, 80); ctx.fill();
+      ctx.fillStyle = '#fcecd4'; ctx.beginPath(); ctx.ellipse(0, 30, 52, 48, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#24211d'; ctx.fillRect(-65, -30, 130, 16);
+      ctx.strokeStyle = '#24211d'; ctx.lineWidth = 22; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-50, 100); ctx.lineTo(-135, 75); ctx.moveTo(50, 100); ctx.lineTo(135, 75); ctx.stroke();
+      ctx.restore();
+      // 半两钱弹出
+      if (localT > 2.0) {
+        ctx.save();
+        ctx.translate(-280, 60);
+        ctx.fillStyle = '#588b76'; ctx.strokeStyle = '#244b3c'; ctx.lineWidth = 6;
+        ctx.beginPath(); ctx.arc(0, 0, 65, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#ece4d2'; ctx.fillRect(-22, -22, 44, 44);
+        ctx.fillStyle = '#244b3c'; ctx.font = 'bold 22px SimHei'; ctx.textAlign = 'center';
+        ctx.fillText('秦半两', 0, 100);
+        ctx.restore();
+      }
+      // 书同文竹简弹出
+      if (localT > 4.0) {
+        ctx.save();
+        ctx.translate(280, 50);
+        ctx.fillStyle = '#d9ad67'; ctx.strokeStyle = '#704e1b'; ctx.lineWidth = 5;
+        ctx.beginPath(); ctx.roundRect(-65, -80, 130, 160, 8); ctx.fill(); ctx.stroke();
+        ctx.fillStyle = '#24211d'; ctx.font = 'bold 28px SimSun'; ctx.textAlign = 'center';
+        ctx.fillText('書同文', 0, -10); ctx.fillText('車同軌', 0, 35);
+        ctx.restore();
+      }
+      ctx.restore();
+      if (localT > 2.5) drawBubble(680, 480, '统统给我统一！', false, Math.min(1.0, (localT - 2.5)*4));
+      if (localT > 7.0) drawBubble(260, 680, '强迫症的终极胜利！', true, Math.min(1.0, (localT - 7.0)*4));
+      break;
+
+    case 7: // 汉 丝绸之路
+      ctx.save();
+      ctx.translate(cx, cy);
+      // 绵延沙丘
+      ctx.strokeStyle = '#d4a34b'; ctx.lineWidth = 8; ctx.beginPath();
+      ctx.moveTo(-500, 200); ctx.quadraticCurveTo(-200, 100, 100, 170); ctx.quadraticCurveTo(300, 220, 500, 150); ctx.stroke();
+      // 张骞骑骆驼行进
+      const camelWalk = (localT * 35) % 300 - 150;
+      ctx.save();
+      ctx.translate(camelWalk, 80);
+      ctx.fillStyle = '#c49552'; ctx.beginPath(); ctx.ellipse(0, 40, 95, 65, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#a87a38'; ctx.beginPath(); ctx.arc(-55, -20, 32, 0, Math.PI*2); ctx.arc(35, -20, 32, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#fcecd4'; ctx.beginPath(); ctx.arc(-10, -60, 28, 0, Math.PI*2); ctx.fill();
+      ctx.strokeStyle = '#a63426'; ctx.lineWidth = 8; ctx.beginPath(); ctx.moveTo(15, -80); ctx.lineTo(15, 30); ctx.stroke();
+      ctx.restore();
+      // 葡萄掉出
+      if (localT > 3.0) {
+        ctx.fillStyle = '#8559a5';
+        for (let p=0; p<6; p++) {
+          ctx.beginPath(); ctx.arc(320 + (p%3)*24, 60 + Math.floor(p/3)*24, 15, 0, Math.PI*2); ctx.fill();
+        }
+      }
+      ctx.restore();
+      if (localT > 2.0) drawBubble(cx + camelWalk, 430, '张骞：出个长差十三年！', false, Math.min(1.0, (localT - 2.0)*4));
+      if (localT > 5.5) drawBubble(1280, 500, '中原吃货：葡萄胡麻大狂喜！', false, Math.min(1.0, (localT - 5.5)*4));
+      if (localT > 8.0) drawBubble(260, 680, '丝绸之路走出来啦！', true, Math.min(1.0, (localT - 8.0)*4));
+      break;
+
+    case 8: // 三国 草船借箭
+      ctx.save();
+      ctx.translate(cx, cy);
+      // 船身微荡
+      const boatRock = Math.sin(localT * 4) * 4;
+      ctx.translate(0, 60 + boatRock);
+      ctx.fillStyle = '#7a552e';
+      ctx.beginPath(); ctx.moveTo(-220, 50); ctx.quadraticCurveTo(0, 110, 220, 50); ctx.lineTo(160, 130); ctx.lineTo(-160, 130); ctx.closePath(); ctx.fill();
+      // 诸葛亮摇扇
+      ctx.fillStyle = '#3c594c'; ctx.beginPath(); ctx.ellipse(0, 45, 45, 60, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#fcecd4'; ctx.beginPath(); ctx.arc(0, -10, 32, 0, Math.PI*2); ctx.fill();
+      const fanAngle = Math.sin(localT * 8) * 0.3;
+      ctx.save(); ctx.translate(35, 10); ctx.rotate(fanAngle);
+      ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#3a342a'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(0, 0, 35, -Math.PI*0.8, -Math.PI*0.2); ctx.lineTo(0,0); ctx.fill(); ctx.stroke();
+      ctx.restore();
+      // 箭雨扎满船身 (2.0s 后密集出现)
+      if (localT > 2.0) {
+        ctx.strokeStyle = '#3a342a'; ctx.lineWidth = 4;
+        const arrowCount = Math.min(16, Math.floor((localT - 2.0) * 12));
+        for (let a=0; a<arrowCount; a++) {
+          const ax = -180 + a * 24;
+          ctx.beginPath(); ctx.moveTo(ax - 25, -20 + (a%3)*10); ctx.lineTo(ax, 50); ctx.stroke();
+        }
+      }
+      ctx.restore();
+      if (localT > 2.5) drawBubble(960, 470, '孔明：承让！十万支箭收工！', false, Math.min(1.0, (localT - 2.5)*4));
+      if (localT > 5.5) drawBubble(1350, 530, '曹操：撤！别射了！', false, Math.min(1.0, (localT - 5.5)*4));
+      if (localT > 7.5) drawBubble(260, 680, '借了十万支，一支没还！', true, Math.min(1.0, (localT - 7.5)*4));
+      break;
+
+    case 9: // 魏晋 兰亭王羲之
+      ctx.save();
+      ctx.translate(cx, cy);
+      // 兰亭卷轴
+      ctx.fillStyle = '#f7f2e7'; ctx.strokeStyle = '#705b41'; ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.roundRect(-240, -120, 180, 260, 6); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#181816'; ctx.font = 'bold 110px SimSun, serif'; ctx.textAlign = 'center';
+      ctx.fillText('之', -150, 40);
+      // 王羲之
+      ctx.fillStyle = '#829ab1'; ctx.beginPath(); ctx.ellipse(140, 110, 50, 70, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#fcecd4'; ctx.beginPath(); ctx.arc(140, 30, 36, 0, Math.PI*2); ctx.fill();
+      // 大白鹅 (昂首大叫)
+      const gooseHead = Math.sin(localT * 6) * 8;
+      ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#3a342a'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.ellipse(250, 130, 40, 28, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(235, 130); ctx.quadraticCurveTo(240, 80 + gooseHead, 260, 70 + gooseHead); ctx.stroke();
+      ctx.fillStyle = '#e88574'; ctx.beginPath(); ctx.polygon && ctx.polygon([258, 65+gooseHead, 275, 72+gooseHead, 258, 79+gooseHead]); ctx.fillRect(258, 65+gooseHead, 16, 12);
+      ctx.restore();
+      if (localT > 2.0) drawBubble(1100, 480, '王羲之：字写累了，看鹅去！', false, Math.min(1.0, (localT - 2.0)*4));
+      if (localT > 5.0) drawBubble(1280, 540, '白鹅：嘎嘎嘎！', false, Math.min(1.0, (localT - 5.0)*4));
+      if (localT > 7.5) drawBubble(260, 680, '一篇《兰亭序》火了一千年！', true, Math.min(1.0, (localT - 7.5)*4));
+      break;
+
+    case 10: // 隋 大运河与科举
+      ctx.save();
+      ctx.translate(cx, cy);
+      // 运河水流
+      ctx.strokeStyle = '#78a397'; ctx.lineWidth = 90; ctx.lineCap = 'round';
+      ctx.beginPath(); ctx.moveTo(-450, 180); ctx.quadraticCurveTo(0, 90, 450, -20); ctx.stroke();
+      // 行船
+      const boatMove = (localT * 40) % 600 - 300;
+      ctx.save(); ctx.translate(boatMove, 70 - boatMove*0.2);
+      ctx.fillStyle = '#8c6843'; ctx.beginPath(); ctx.moveTo(-35, 15); ctx.lineTo(35, 15); ctx.lineTo(20, 35); ctx.lineTo(-20, 35); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(-2, -30, 4, 45); ctx.beginPath(); ctx.moveTo(0, -25); ctx.lineTo(25, 0); ctx.lineTo(0, 10); ctx.fill();
+      ctx.restore();
+      // 考棚与状元及第金榜
+      ctx.fillStyle = '#d9ad67'; ctx.fillRect(220, -20, 140, 120);
+      ctx.fillStyle = '#a63426'; ctx.font = 'bold 36px SimSun'; ctx.textAlign = 'center'; ctx.fillText('金榜', 290, 50);
+      ctx.restore();
+      if (localT > 2.5) drawBubble(780, 510, '杨广：运河挖通！去江南巡游！', false, Math.min(1.0, (localT - 2.5)*4));
+      if (localT > 5.5) drawBubble(1250, 440, '天下书生：终于能靠读书改命了！', false, Math.min(1.0, (localT - 5.5)*4));
+      if (localT > 8.0) drawBubble(260, 680, '38年干了两件千秋大事！', true, Math.min(1.0, (localT - 8.0)*4));
+      break;
+
+    case 11: // 唐 盛世大唐李白
+      ctx.save();
+      ctx.translate(cx, cy);
+      // 巍峨大雁塔
+      ctx.fillStyle = '#8c7e68'; ctx.fillRect(-320, -10, 140, 200);
+      ctx.fillStyle = '#a89a80'; ctx.fillRect(-305, -60, 110, 50);
+      ctx.fillStyle = '#bfae93'; ctx.fillRect(-290, -100, 80, 40);
+      // 皎洁明月
+      ctx.fillStyle = '#f5ecd7'; ctx.strokeStyle = '#d4a34b'; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.arc(280, -140, 60, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      // 李白举杯醉步
+      const drunkSway = Math.sin(localT * 3) * 0.1;
+      ctx.save(); ctx.translate(140, 70); ctx.rotate(drunkSway);
+      ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#24211d'; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.ellipse(0, 90, 55, 75, 0, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#fcecd4'; ctx.beginPath(); ctx.arc(0, 0, 42, 0, Math.PI*2); ctx.fill();
+      // 举金樽
+      ctx.strokeStyle = '#24211d'; ctx.lineWidth = 12; ctx.beginPath(); ctx.moveTo(40, 40); ctx.lineTo(80, -20); ctx.stroke();
+      ctx.fillStyle = '#d4a34b'; ctx.beginPath(); ctx.arc(80, -25, 16, 0, Math.PI*2); ctx.fill();
+      ctx.restore();
+      ctx.restore();
+      if (localT > 2.0) drawBubble(1100, 480, '李白：呼儿将出换美酒！', false, Math.min(1.0, (localT - 2.0)*4));
+      if (localT > 5.5) drawBubble(640, 480, '万国来朝的大唐！', false, Math.min(1.0, (localT - 5.5)*4));
+      if (localT > 8.0) drawBubble(260, 680, '诗写得好，酒量更有长进！', true, Math.min(1.0, (localT - 8.0)*4));
+      break;
+
+    case 12: // 宋 活字印刷与东坡肉
+      ctx.save();
+      ctx.translate(cx, cy);
+      // 活字字模阵列
+      ctx.fillStyle = '#a88556'; ctx.strokeStyle = '#4a371c'; ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.roundRect(-300, 20, 140, 140, 8); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#24211d'; ctx.font = 'bold 58px SimSun'; ctx.textAlign = 'center';
+      ctx.fillText('宋', -230, 110);
+      // 大铁锅炖肉
+      ctx.fillStyle = '#3a3731'; ctx.beginPath(); ctx.ellipse(220, 90, 100, 40, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#a63426';
+      ctx.fillRect(180, 55, 36, 30); ctx.fillRect(230, 55, 36, 30);
+      // 香气
+      const steamY = (localT * 25) % 80;
+      ctx.strokeStyle = '#bfae93'; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.moveTo(200, 40); ctx.quadraticCurveTo(180, -steamY, 210, -50-steamY); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(240, 40); ctx.quadraticCurveTo(260, -steamY, 230, -50-steamY); ctx.stroke();
+      ctx.restore();
+      if (localT > 2.5) drawBubble(720, 500, '活字印刷、指南针全就位！', false, Math.min(1.0, (localT - 2.5)*4));
+      if (localT > 5.5) drawBubble(1180, 480, '苏东坡：慢着火，少著水！', false, Math.min(1.0, (localT - 5.5)*4));
+      if (localT > 8.0) drawBubble(260, 680, '一边被贬，一边发明东坡肉！', true, Math.min(1.0, (localT - 8.0)*4));
+      break;
+
+    case 13: // 元 蒙古铁骑与马可波罗
+      ctx.save();
+      ctx.translate(cx, cy);
+      // 超大疆域版图
+      ctx.fillStyle = '#d9ad67'; ctx.beginPath();
+      ctx.moveTo(-320, 80); ctx.quadraticCurveTo(0, -140, 280, -60); ctx.quadraticCurveTo(380, 100, 140, 160); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#704e1b'; ctx.font = 'bold 72px SimSun'; ctx.textAlign = 'center'; ctx.fillText('大元', -40, 30);
+      // 马可波罗背着行囊写日记
+      ctx.fillStyle = '#75508a'; ctx.beginPath(); ctx.ellipse(220, 120, 45, 65, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#fcecd4'; ctx.beginPath(); ctx.arc(220, 45, 35, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#ffffff'; ctx.fillRect(250, 75, 45, 55);
+      ctx.restore();
+      if (localT > 2.5) drawBubble(880, 450, '蒙古铁骑：版图大到地图装不下！', false, Math.min(1.0, (localT - 2.5)*4));
+      if (localT > 5.5) drawBubble(1240, 490, '马可·波罗：这必须写进畅销书！', false, Math.min(1.0, (localT - 5.5)*4));
+      if (localT > 8.0) drawBubble(260, 680, '马可波罗畅销游记诞生！', true, Math.min(1.0, (localT - 8.0)*4));
+      break;
+
+    case 14: // 明 郑和下西洋
+      ctx.save();
+      ctx.translate(cx, cy);
+      // 惊涛骇浪
+      ctx.strokeStyle = '#588b76'; ctx.lineWidth = 14; ctx.beginPath();
+      ctx.moveTo(-500, 180); ctx.quadraticCurveTo(-250, 130, 0, 180); ctx.quadraticCurveTo(250, 230, 500, 160); ctx.stroke();
+      // 郑和巨舰 (缓慢破浪前进)
+      const shipRock = Math.sin(localT * 3) * 5;
+      ctx.translate(-40, 20 + shipRock);
+      ctx.fillStyle = '#8c6843'; ctx.beginPath();
+      ctx.moveTo(-190, 60); ctx.lineTo(190, 60); ctx.lineTo(140, 145); ctx.lineTo(-150, 145); ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#f5ecd7'; ctx.strokeStyle = '#3a342a'; ctx.lineWidth = 3;
+      ctx.beginPath(); ctx.moveTo(-120, 40); ctx.lineTo(-120, -90); ctx.lineTo(-60, -20); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(-30, 40); ctx.lineTo(-30, -140); ctx.lineTo(50, -50); ctx.fill(); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(70, 40); ctx.lineTo(70, -100); ctx.lineTo(140, -30); ctx.fill(); ctx.stroke();
+      ctx.restore();
+      if (localT > 2.0) drawBubble(920, 460, '郑和：七下西洋，扬威异域！', false, Math.min(1.0, (localT - 2.0)*4));
+      if (localT > 5.0) drawBubble(260, 680, '比哥伦布大得多的大明宝船！', true, Math.min(1.0, (localT - 5.0)*4));
+      break;
+
+    case 15: // 清 康乾盛世到1840
+      ctx.save();
+      ctx.translate(cx, cy);
+      // 欢呼的清廷官员
+      ctx.fillStyle = '#2d527c'; ctx.beginPath(); ctx.ellipse(-200, 120, 55, 75, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#fcecd4'; ctx.beginPath(); ctx.arc(-200, 35, 36, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#a63426'; ctx.beginPath(); ctx.ellipse(-200, 5, 42, 12, 0, 0, Math.PI*2); ctx.fill();
+      // 1840 蒸汽战舰黑烟
+      if (localT > 4.5) {
+        ctx.fillStyle = '#423e38'; ctx.fillRect(150, 70, 180, 75);
+        ctx.fillStyle = '#2b261f'; ctx.fillRect(210, 10, 40, 60);
+        const warSmoke = (localT * 20) % 90;
+        ctx.fillStyle = '#24211d';
+        ctx.beginPath(); ctx.arc(230, -20 - warSmoke, 35, 0, Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.arc(260, -60 - warSmoke, 50, 0, Math.PI*2); ctx.fill();
+      }
+      ctx.restore();
+      if (localT > 2.0) drawBubble(760, 480, '官员：康乾盛世，人口破3亿！', false, Math.min(1.0, (localT - 2.0)*4));
+      if (localT > 6.0) drawBubble(1240, 480, '战舰黑烟：列强开到了家门口！', false, Math.min(1.0, (localT - 6.0)*4));
+      if (localT > 8.5) drawBubble(260, 680, '近代屈辱与觉醒开始了...', true, Math.min(1.0, (localT - 8.5)*4));
+      break;
+
+    case 16: // 辛亥 剪辫子
+      ctx.save();
+      ctx.translate(cx, cy);
+      // 长衫青年
+      ctx.fillStyle = '#5c6f84'; ctx.beginPath(); ctx.ellipse(-50, 120, 50, 75, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#fcecd4'; ctx.beginPath(); ctx.arc(-50, 30, 38, 0, Math.PI*2); ctx.fill();
+      // 巨大剪刀 (咔嚓闭合)
+      const snipAngle = (localT * 8) % 2 > 1 ? 0.35 : 0.05;
+      ctx.save(); ctx.translate(60, 20);
+      ctx.strokeStyle = '#a63426'; ctx.lineWidth = 10; ctx.lineCap = 'round';
+      ctx.save(); ctx.rotate(snipAngle); ctx.beginPath(); ctx.moveTo(-40, -40); ctx.lineTo(50, 50); ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.rotate(-snipAngle); ctx.beginPath(); ctx.moveTo(-40, 40); ctx.lineTo(50, -50); ctx.stroke(); ctx.restore();
+      ctx.restore();
+      ctx.restore();
+      if (localT > 2.0) drawBubble(1020, 460, '咔嚓！剪掉辫子！', false, Math.min(1.0, (localT - 2.0)*4));
+      if (localT > 5.0) drawBubble(260, 680, '两千年皇帝制度正式画上句号！', true, Math.min(1.0, (localT - 5.0)*4));
+      break;
+
+    case 17: // 1949 新中国
+      ctx.save();
+      ctx.translate(cx, cy);
+      // 大红灯笼摇曳
+      const lanternSwing = Math.sin(localT * 4) * 0.1;
+      ctx.save(); ctx.translate(-240, -60); ctx.rotate(lanternSwing);
+      ctx.fillStyle = '#d93829'; ctx.beginPath(); ctx.ellipse(0, 0, 60, 48, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#d4a34b'; ctx.fillRect(-25, -55, 50, 10); ctx.fillRect(-25, 45, 50, 10);
+      ctx.restore();
+      ctx.save(); ctx.translate(240, -60); ctx.rotate(-lanternSwing);
+      ctx.fillStyle = '#d93829'; ctx.beginPath(); ctx.ellipse(0, 0, 60, 48, 0, 0, Math.PI*2); ctx.fill();
+      ctx.fillStyle = '#d4a34b'; ctx.fillRect(-25, -55, 50, 10); ctx.fillRect(-25, 45, 50, 10);
+      ctx.restore();
+      // 1949 璀璨大字
+      ctx.fillStyle = '#d4a34b'; ctx.font = 'bold 96px SimSun, serif'; ctx.textAlign = 'center';
+      ctx.fillText('1949', 0, 30);
+      ctx.fillStyle = '#a63426'; ctx.font = 'bold 36px SimSun';
+      ctx.fillText('中华人民共和国成立', 0, 100);
+      ctx.restore();
+      if (localT > 2.0) drawBubble(960, 450, '中国人民从此站起来了！', false, Math.min(1.0, (localT - 2.0)*4));
+      if (localT > 5.0) drawBubble(260, 680, '日子越过越红火！', true, Math.min(1.0, (localT - 5.0)*4));
+      break;
+
+    case 18: // 今天 高铁与航天
+      ctx.save();
+      ctx.translate(cx, cy);
+      // 高铁飞驰
+      const bulletX = (localT * 80) % 700 - 350;
+      ctx.save(); ctx.translate(bulletX - 100, 100);
+      ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#244b3c'; ctx.lineWidth = 5;
+      ctx.beginPath(); ctx.roundRect(-120, -25, 240, 50, 15); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#3c594c'; ctx.fillRect(-90, -12, 35, 24); ctx.fillRect(-35, -12, 35, 24); ctx.fillRect(20, -12, 35, 24);
+      ctx.restore();
+      // 运载火箭升空 (带烈焰喷射)
+      const rocketY = Math.max(-250, 40 - localT * 28);
+      ctx.save(); ctx.translate(220, rocketY);
+      ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#a63426'; ctx.lineWidth = 4;
+      ctx.beginPath(); ctx.roundRect(-25, -80, 50, 110, 10); ctx.fill(); ctx.stroke();
+      ctx.fillStyle = '#a63426'; ctx.beginPath(); ctx.moveTo(-25, -80); ctx.lineTo(0, -130); ctx.lineTo(25, -80); ctx.fill();
+      // 尾焰
+      const flameLong = 60 + Math.sin(localT * 25) * 20;
+      ctx.fillStyle = '#e86a58'; ctx.beginPath(); ctx.moveTo(-20, 30); ctx.lineTo(0, 30 + flameLong); ctx.lineTo(20, 30); ctx.fill();
+      ctx.fillStyle = '#fac170'; ctx.beginPath(); ctx.moveTo(-10, 30); ctx.lineTo(0, 30 + flameLong*0.6); ctx.lineTo(10, 30); ctx.fill();
+      ctx.restore();
+      ctx.restore();
+      if (localT > 2.0) drawBubble(1180, 450, '九天揽月 · 梦想成真！', false, Math.min(1.0, (localT - 2.0)*4));
+      if (localT > 5.5) drawBubble(260, 680, '从五千年走向星辰大海！', true, Math.min(1.0, (localT - 5.5)*4));
+      break;
+  }
+
+  // 6. 底部打字机字幕
+  const fullSub = ch.desc;
+  const speed = fullSub.length / (chDur - 0.4);
+  const charCount = Math.min(fullSub.length, Math.floor(localT * speed));
+  const curSub = fullSub.slice(0, charCount);
+
+  ctx.save();
+  ctx.translate(960, 950);
+  ctx.fillStyle = '#24211d';
+  ctx.beginPath();
+  ctx.roundRect(-650, -45, 1300, 72, 36);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 28px Microsoft YaHei, SimHei, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(curSub, 0, 5);
+  ctx.restore();
+};
+
+// 自动录制指定时间段 [startT, endT]
+window.recordRange = function(startT, endT) {
+  return new Promise((resolve) => {
+    const stream = cvs.captureStream(60); // 60 FPS 录屏
+    const recorder = new MediaRecorder(stream, {
+      mimeType: 'video/webm;codecs=vp9',
+      videoBitsPerSecond: 10000000 // 10 Mbps 超清码率
+    });
+    const chunks = [];
+    recorder.ondataavailable = e => chunks.push(e.data);
+    recorder.onstop = () => {
+      const blob = new Blob(chunks, { type: 'video/webm' });
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    };
+
+    recorder.start();
+    const startTime = performance.now();
+    const duration = endT - startT;
+
+    function loop(now) {
+      const elapsed = (now - startTime) / 1000;
+      const currentGlobalT = startT + elapsed;
+      renderGlobalFrame(currentGlobalT);
+
+      if (elapsed < duration) {
+        requestAnimationFrame(loop);
+      } else {
+        recorder.stop();
+      }
+    }
+    requestAnimationFrame(loop);
+  });
+};
+
+console.log('19 篇章全局动画引擎就绪！');
+</script>
+</body>
+</html>

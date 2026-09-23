@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+      <defs>
+        <radialGradient id="paper" cx="50%" cy="50%" r="70%">
+          <stop offset="0%" stop-color="#faf6ee"/>
+          <stop offset="100%" stop-color="#ece4d2"/>
+        </radialGradient>
+        <filter id="ink-bleed">
+          <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise"/>
+          <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+        </filter>
+      </defs>
+      <rect width="1920" height="1080" fill="url(#paper)"/>
+      <rect width="1920" height="1080" fill="none" stroke="#d5c8ad" stroke-width="24" opacity="0.4"/>
+      <g transform="translate(100, 80)">
+        <rect x="0" y="0" width="110" height="42" rx="4" fill="#a63426"/>
+        <text x="55" y="28" font-family="SimSun, serif" font-size="22" font-weight="bold" fill="#ffffff" text-anchor="middle">前221</text>
+        <text x="140" y="38" font-family="SimSun, serif" font-size="56" font-weight="bold" fill="#2b261f">秦</text>
+        <text x="215" y="38" font-family="SimSun, serif" font-size="26" fill="#7a6e5d">· 六一统</text>
+      </g>
+      <path d="M 120 860 Q 600 855, 1100 862 T 1820 858" fill="none" stroke="#3a342a" stroke-width="5" stroke-linecap="round" filter="url(#ink-bleed)"/>
+    </svg>

@@ -1,0 +1,25 @@
+# 依赖
+node_modules/
+.pnpm-store/
+
+# 视频与大型音频
+*.mp4
+*.webm
+*.wav
+*.mp3
+source.mp4
+full_video_parts/
+full_voices/
+full_voice_master.wav
+audio.wav
+evidence/motion_study/
+evidence/motion_frames/
+
+# 编译与临时列表
+*.tmp
+*concat*.txt
+.DS_Store
+Thumbs.db
+
+# 本地日志
+*.log

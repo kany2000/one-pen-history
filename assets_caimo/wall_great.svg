@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 700 350" width="700" height="350">
+      <g transform="translate(50, 40)">
+        <path d="M 0 160 Q 150 110, 300 135 T 600 70 L 600 250 L 0 250 Z" fill="#cfc2a7" opacity="0.85"/>
+        <rect x="180" y="80" width="55" height="65" fill="#a89a80"/>
+        <rect x="380" y="100" width="55" height="65" fill="#a89a80"/>
+        <text x="210" y="55" font-family="SimSun" font-size="28" fill="#5c4f39" font-weight="bold" text-anchor="middle">万里长城</text>
+      </g>
+    </svg>

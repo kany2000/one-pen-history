@@ -1,0 +1,26 @@
+{
+  "name": "one-pen-history",
+  "version": "1.0.0",
+  "description": "一支笔画完中国史 - 极简国风全动态历史科普视频自动化生成引擎 (0模型成本 · 60fps代码级渲染)",
+  "main": "full_motion_engine.html",
+  "scripts": {
+    "preview": "node -e \"require('child_process').execSync('start full_motion_engine.html')\"",
+    "build:svg": "node build_full_chapters_svg.js",
+    "build:voices": "python generate_full_voices.py",
+    "record": "node record_full_dynamic.js"
+  },
+  "keywords": [
+    "chinese-history",
+    "animation",
+    "video-generator",
+    "canvas",
+    "hypit",
+    "aigc",
+    "explainer-video"
+  ],
+  "author": "kany2000",
+  "license": "MIT",
+  "dependencies": {
+    "puppeteer-core": "^22.0.0"
+  }
+}

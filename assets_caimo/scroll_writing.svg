@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 350" width="300" height="350">
+      <g transform="translate(150, 150)">
+        <rect x="-90" y="-110" width="180" height="220" rx="10" fill="#d9ad67" stroke="#704e1b" stroke-width="6"/>
+        <line x1="-30" y1="-110" x2="-30" y2="110" stroke="#704e1b" stroke-width="3"/>
+        <line x1="30" y1="-110" x2="30" y2="110" stroke="#704e1b" stroke-width="3"/>
+        <text x="0" y="5" font-family="SimSun" font-size="36" font-weight="bold" fill="#24211d" text-anchor="middle">書同文</text>
+        <text x="0" y="50" font-family="SimSun" font-size="36" font-weight="bold" fill="#24211d" text-anchor="middle">車同軌</text>
+        <text x="0" y="145" font-family="SimHei" font-size="26" font-weight="bold" fill="#704e1b" text-anchor="middle">规矩定天下</text>
+      </g>
+    </svg>

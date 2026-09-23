@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<style>
+  body { margin: 0; padding: 0; background: #faf6ee; overflow: hidden; }
+  canvas { display: block; width: 1920px; height: 1080px; }
+</style>
+</head>
+<body>
+<canvas id="cvs" width="1920" height="1080"></canvas>
+<script>
+const cvs = document.getElementById('cvs');
+const ctx = cvs.getContext('2d');
+
+function renderFrame(t) {
+  ctx.clearRect(0, 0, 1920, 1080);
+
+  // 1. 米黄色宣纸背景与边缘微暗角
+  const bgGrad = ctx.createRadialGradient(960, 540, 200, 960, 540, 1100);
+  bgGrad.addColorStop(0, '#faf6ee');
+  bgGrad.addColorStop(1, '#ece4d2');
+  ctx.fillStyle = bgGrad;
+  ctx.fillRect(0, 0, 1920, 1080);
+
+  ctx.strokeStyle = '#d5c8ad';
+  ctx.lineWidth = 20;
+  ctx.strokeRect(10, 10, 1900, 1060);
+
+  // 2. 左上角时代印章与大字
+  ctx.save();
+  ctx.translate(100, 80);
+  ctx.fillStyle = '#a63426';
+  ctx.beginPath();
+  ctx.roundRect(0, 0, 110, 42, 4);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 20px SimSun, serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('约前1600', 55, 28);
+
+  ctx.fillStyle = '#2b261f';
+  ctx.font = 'bold 54px SimSun, serif';
+  ctx.textAlign = 'left';
+  ctx.fillText('商', 135, 38);
+  ctx.fillStyle = '#7a6e5d';
+  ctx.font = '24px SimSun, serif';
+  ctx.fillText('· 甲骨文 · 青铜器', 210, 38);
+  ctx.restore();
+
+  // 3. 地面水墨横线
+  ctx.save();
+  ctx.strokeStyle = '#3a342a';
+  ctx.lineWidth = 4;
+  ctx.lineCap = 'round';
+  ctx.beginPath();
+  ctx.moveTo(100, 840);
+  ctx.quadraticCurveTo(600, 836, 1100, 842);
+  ctx.quadraticCurveTo(1500, 838, 1820, 840);
+  ctx.stroke();
+  ctx.restore();
+
+  // 4. 青铜大鼎 (从 0.5s 开始逐渐从地面升起)
+  if (t > 0.5) {
+    const scale = Math.min(1.0, (t - 0.5) * 2);
+    ctx.save();
+    ctx.translate(1620, 770);
+    ctx.scale(scale, scale);
+    ctx.fillStyle = '#47695a';
+    ctx.strokeStyle = '#284236';
+    ctx.lineWidth = 5;
+    ctx.beginPath();
+    ctx.arc(0, 0, 65, 0, Math.PI);
+    ctx.lineTo(65, -30);
+    ctx.lineTo(-65, -30);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillRect(-60, -60, 20, 35);
+    ctx.fillRect(40, -60, 20, 35);
+    ctx.strokeRect(-60, -60, 20, 35);
+    ctx.strokeRect(40, -60, 20, 35);
+    ctx.lineWidth = 8;
+    ctx.beginPath();
+    ctx.moveTo(-45, 45); ctx.lineTo(-55, 95);
+    ctx.moveTo(45, 45); ctx.lineTo(55, 95);
+    ctx.moveTo(0, 65); ctx.lineTo(0, 95);
+    ctx.stroke();
+    ctx.fillStyle = '#284236';
+    ctx.font = 'bold 18px SimSun';
+    ctx.textAlign = 'center';
+    ctx.fillText('司母戊', 0, 15);
+    ctx.restore();
+  }
+
+  // 5. 熊熊燃烧的生动跳跃火苗
+  ctx.save();
+  ctx.translate(960, 780);
+  const flameH1 = 70 + Math.sin(t * 14) * 16 + Math.cos(t * 22) * 8;
+  const flameH2 = 55 + Math.cos(t * 16) * 12;
+  const flameH3 = 45 + Math.sin(t * 18) * 10;
+  ctx.fillStyle = '#d9432f';
+  ctx.beginPath();
+  ctx.moveTo(-45, 20);
+  ctx.quadraticCurveTo(-35, -flameH1 * 0.6, -15, -flameH1);
+  ctx.quadraticCurveTo(0, -flameH1 * 0.4, 20, -flameH1 * 0.8);
+  ctx.quadraticCurveTo(45, -20, 45, 20);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#f5a623';
+  ctx.beginPath();
+  ctx.moveTo(-25, 20);
+  ctx.quadraticCurveTo(-15, -flameH2 * 0.5, 0, -flameH2);
+  ctx.quadraticCurveTo(20, -flameH2 * 0.5, 25, 20);
+  ctx.closePath();
+  ctx.fill();
+  ctx.fillStyle = '#fff275';
+  ctx.beginPath();
+  ctx.moveTo(-12, 20);
+  ctx.quadraticCurveTo(0, -flameH3, 12, 20);
+  ctx.closePath();
+  ctx.fill();
+  ctx.restore();
+
+  // 6. 中央巨大龟甲 (带受热剧烈颤抖动效)
+  ctx.save();
+  const shakeX = (t > 2.0 && t < 7.0) ? (Math.sin(t * 40) * 3) : 0;
+  const shakeY = (t > 2.0 && t < 7.0) ? (Math.cos(t * 45) * 2) : 0;
+  ctx.translate(960 + shakeX, 520 + shakeY);
+
+  ctx.fillStyle = '#dfcfb2';
+  ctx.strokeStyle = '#423420';
+  ctx.lineWidth = 6;
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 160, 210, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(0, -210); ctx.lineTo(0, 210);
+  ctx.moveTo(-150, -70); ctx.lineTo(150, -70);
+  ctx.moveTo(-160, 70); ctx.lineTo(160, 70);
+  ctx.moveTo(-120, -140); ctx.lineTo(120, -140);
+  ctx.moveTo(-120, 140); ctx.lineTo(120, 140);
+  ctx.stroke();
+
+  // 裂纹逐笔生长
+  if (t > 3.0) {
+    const crackP = Math.min(1.0, (t - 3.0) * 2.5);
+    ctx.strokeStyle = '#992211';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(-10, -80);
+    ctx.lineTo(-10 + 35 * crackP, -80 + 30 * crackP);
+    ctx.lineTo(-10 + 20 * crackP, -80 + 75 * crackP);
+    ctx.lineTo(-10 + 60 * crackP, -80 + 110 * crackP);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(30, 20);
+    ctx.lineTo(30 - 45 * crackP, 20 + 40 * crackP);
+    ctx.lineTo(30 - 25 * crackP, 20 + 80 * crackP);
+    ctx.stroke();
+  }
+
+  // 甲骨文字逐个“Pop!”弹出
+  const words = [
+    { text: '日', x: -80, y: -90, showT: 4.0 },
+    { text: '人', x: 80, y: -90, showT: 4.8 },
+    { text: '王', x: -80, y: 50, showT: 5.6 },
+    { text: '田', x: 80, y: 50, showT: 6.4 }
+  ];
+
+  ctx.font = 'bold 52px SimSun, serif';
+  ctx.fillStyle = '#2b261f';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  for (const w of words) {
+    if (t > w.showT) {
+      const age = t - w.showT;
+      const popScale = age < 0.2 ? (1.0 + Math.sin(age / 0.2 * Math.PI) * 0.4) : 1.0;
+      ctx.save();
+      ctx.translate(w.x, w.y);
+      ctx.scale(popScale, popScale);
+      ctx.fillText(w.text, 0, 0);
+      ctx.restore();
+    }
+  }
+  ctx.restore();
+
+  // 7. 右下角满头大汗慢慢爬出来的可爱小乌龟
+  if (t > 1.8) {
+    const crawlX = Math.max(1360, 1550 - (t - 1.8) * 35);
+    const legSwing = Math.sin(t * 8) * 8;
+    ctx.save();
+    ctx.translate(crawlX, 810);
+    ctx.fillStyle = '#688e73';
+    ctx.strokeStyle = '#2d4b36';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(0, 0, 50, Math.PI, 0);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(0, 0, 32, Math.PI, 0);
+    ctx.stroke();
+    const headStretch = Math.sin(t * 8) * 5;
+    ctx.fillStyle = '#89b395';
+    ctx.beginPath();
+    ctx.arc(55 + headStretch, -5, 20, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#000000';
+    ctx.beginPath();
+    ctx.arc(62 + headStretch, -8, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = '#4a90e2';
+    ctx.beginPath();
+    ctx.ellipse(75 + headStretch, -16 + Math.sin(t * 6) * 4, 5, 8, Math.PI / 4, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.lineWidth = 6;
+    ctx.strokeStyle = '#2d4b36';
+    ctx.beginPath();
+    ctx.moveTo(-30, 0); ctx.lineTo(-40 + legSwing, 25);
+    ctx.moveTo(30, 0); ctx.lineTo(20 - legSwing, 25);
+    ctx.stroke();
+    ctx.restore();
+
+    // 乌龟上方的吐槽气泡
+    if (t > 6.8) {
+      const bAge = t - 6.8;
+      const bScale = Math.min(1.0, bAge * 5);
+      ctx.save();
+      ctx.translate(crawlX + 10, 680);
+      ctx.scale(bScale, bScale);
+      ctx.fillStyle = '#ffffff';
+      ctx.strokeStyle = '#2b261f';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.roundRect(-90, -45, 180, 60, 20);
+      ctx.fill();
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-10, 15); ctx.lineTo(10, 15); ctx.lineTo(0, 35);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#2b261f';
+      ctx.font = 'bold 22px SimHei, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('我做错了什么？', 0, -10);
+      ctx.restore();
+    }
+  }
+
+  // 8. 左下角墨水团子
+  ctx.save();
+  const mascotJump = Math.abs(Math.sin(t * 6)) * 14;
+  ctx.translate(320, 810 - mascotJump);
+  ctx.fillStyle = '#2b261f';
+  ctx.beginPath();
+  ctx.ellipse(0, 0, 42, 38, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(-14, -6, 7, 0, Math.PI * 2);
+  ctx.arc(14, -6, 7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#000000';
+  ctx.beginPath();
+  ctx.arc(-13, -6, 3, 0, Math.PI * 2);
+  ctx.arc(15, -6, 3, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.fillStyle = '#e88574';
+  ctx.beginPath();
+  ctx.arc(-22, 6, 7, 0, Math.PI * 2);
+  ctx.arc(22, 6, 7, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.strokeStyle = '#2b261f';
+  ctx.lineWidth = 5;
+  ctx.lineCap = 'round';
+  const armMove = Math.sin(t * 10) * 15;
+  ctx.beginPath();
+  ctx.moveTo(-35, 5); ctx.lineTo(-55, -15 + armMove);
+  ctx.moveTo(35, 5); ctx.lineTo(55, -15 - armMove);
+  ctx.stroke();
+  ctx.restore();
+
+  // 墨水团子的吐槽气泡
+  if (t > 7.8) {
+    const bAge = t - 7.8;
+    const bScale = Math.min(1.0, bAge * 5);
+    ctx.save();
+    ctx.translate(320, 680);
+    ctx.scale(bScale, bScale);
+    ctx.fillStyle = '#ffffff';
+    ctx.strokeStyle = '#2b261f';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.roundRect(-100, -45, 200, 60, 20);
+    ctx.fill();
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(-10, 15); ctx.lineTo(10, 15); ctx.lineTo(0, 35);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+    ctx.fillStyle = '#a63426';
+    ctx.font = 'bold 22px SimHei, sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('龟龟：我太难了！', 0, -10);
+    ctx.restore();
+  }
+
+  // 9. 底部字幕 (打字机效果)
+  const fullSub = '商朝人遇事不决？烤龟壳！看裂纹定吉凶，刻下的字就是最早的成熟汉字——甲骨文。';
+  const charCount = Math.min(fullSub.length, Math.floor(t * 4.4));
+  const curSub = fullSub.slice(0, charCount);
+
+  ctx.save();
+  ctx.translate(960, 950);
+  ctx.fillStyle = '#24211d';
+  ctx.beginPath();
+  ctx.roundRect(-650, -45, 1300, 72, 36);
+  ctx.fill();
+  ctx.fillStyle = '#ffffff';
+  ctx.font = 'bold 28px Microsoft YaHei, SimHei, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(curSub, 0, 5);
+  ctx.restore();
+}
+
+// 自动录制控制器
+window.startRecording = function(durationSeconds) {
+  return new Promise((resolve) => {
+    const stream = cvs.captureStream(60); // 60 FPS 录制
+    const recorder = new MediaRecorder(stream, {
+      mimeType: 'video/webm;codecs=vp9',
+      videoBitsPerSecond: 10000000 // 10 Mbps 超清码率
+    });
+    const chunks = [];
+    recorder.ondataavailable = e => chunks.push(e.data);
+    recorder.onstop = () => {
+      const blob = new Blob(chunks, { type: 'video/webm' });
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.readAsDataURL(blob);
+    };
+
+    recorder.start();
+    const startTime = performance.now();
+    
+    function loop(now) {
+      const elapsed = (now - startTime) / 1000;
+      renderFrame(elapsed);
+      if (elapsed < durationSeconds) {
+        requestAnimationFrame(loop);
+      } else {
+        recorder.stop();
+      }
+    }
+    requestAnimationFrame(loop);
+  });
+};
+</script>
+</body>
+</html>

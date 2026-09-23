@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080" width="1920" height="1080">
+  
+  <defs>
+    <radialGradient id="paper" cx="50%" cy="50%" r="70%">
+      <stop offset="0%" stop-color="#faf6ee"/>
+      <stop offset="100%" stop-color="#ece4d2"/>
+    </radialGradient>
+    <filter id="ink-bleed">
+      <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="3" result="noise"/>
+      <feDisplacementMap in="SourceGraphic" in2="noise" scale="3" xChannelSelector="R" yChannelSelector="G"/>
+    </filter>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#paper)"/>
+  <rect width="1920" height="1080" fill="none" stroke="#d5c8ad" stroke-width="24" opacity="0.4"/>
+  
+  <!-- 标题与印章 -->
+  <g transform="translate(100, 80)">
+    <rect x="0" y="0" width="100" height="42" rx="4" fill="#a63426"/>
+    <text x="50" y="28" font-family="SimSun, serif" font-size="20" font-weight="bold" fill="#ffffff" text-anchor="middle">前770</text>
+    <text x="130" y="38" font-family="SimSun, serif" font-size="52" font-weight="bold" fill="#2b261f">春秋战国</text>
+    <text x="210" y="38" font-family="SimSun, serif" font-size="26" fill="#7a6e5d">· 百家争鸣</text>
+  </g>
+
+  <!-- 地面墨线 -->
+  <path d="M 120 860 Q 600 855, 1100 862 T 1820 858" fill="none" stroke="#3a342a" stroke-width="5" stroke-linecap="round" filter="url(#ink-bleed)"/>
+
+  <!-- 左下角墨水团子 -->
+  <g transform="translate(260, 800)">
+    <ellipse cx="0" cy="0" rx="40" ry="36" fill="#2b261f" filter="url(#ink-bleed)"/>
+    <ellipse cx="-12" cy="-4" rx="5" ry="6" fill="#ffffff"/>
+    <ellipse cx="12" cy="-4" rx="5" ry="6" fill="#ffffff"/>
+    <circle cx="-11" cy="-4" r="2.5" fill="#000000"/>
+    <circle cx="13" cy="-4" r="2.5" fill="#000000"/>
+    <circle cx="-20" cy="8" r="6" fill="#e88574" opacity="0.6"/>
+    <circle cx="20" cy="8" r="6" fill="#e88574" opacity="0.6"/>
+    <line x1="28" y1="5" x2="60" y2="-48" stroke="#5c4a35" stroke-width="5" stroke-linecap="round"/>
+    <polygon points="58,-48 108,-32 55,-14" fill="#a63426"/>
+    <text x="72" y="-28" font-family="SimSun" font-size="16" fill="#ffffff" font-weight="bold">华</text>
+  </g>
+  
+  
+        <g transform="translate(960, 520)">
+          <!-- 四大思想家排排站吵架 -->
+          <!-- 孔子 -->
+          <g transform="translate(-360, 80)">
+            <ellipse cx="0" cy="80" rx="45" ry="60" fill="#588b76"/>
+            <circle cx="0" cy="15" r="35" fill="#fcecd4"/>
+            <text x="0" y="-40" font-family="SimSun" font-size="36" font-weight="bold" fill="#a63426">仁！</text>
+            <text x="0" y="170" font-family="SimHei" font-size="22" fill="#244b3c" font-weight="bold" text-anchor="middle">孔子</text>
+          </g>
+          <!-- 老子 -->
+          <g transform="translate(-120, 80)">
+            <ellipse cx="0" cy="80" rx="45" ry="60" fill="#829ab1"/>
+            <circle cx="0" cy="15" r="35" fill="#fcecd4"/>
+            <text x="0" y="-40" font-family="SimSun" font-size="32" font-weight="bold" fill="#2d527c">无为~</text>
+            <text x="0" y="170" font-family="SimHei" font-size="22" fill="#2d527c" font-weight="bold" text-anchor="middle">老子</text>
+          </g>
+          <!-- 墨子 -->
+          <g transform="translate(120, 80)">
+            <ellipse cx="0" cy="80" rx="45" ry="60" fill="#a67c52"/>
+            <circle cx="0" cy="15" r="35" fill="#fcecd4"/>
+            <text x="0" y="-40" font-family="SimSun" font-size="32" font-weight="bold" fill="#73491f">兼爱！</text>
+            <text x="0" y="170" font-family="SimHei" font-size="22" fill="#73491f" font-weight="bold" text-anchor="middle">墨子</text>
+          </g>
+          <!-- 韩非 -->
+          <g transform="translate(360, 80)">
+            <ellipse cx="0" cy="80" rx="45" ry="60" fill="#2b261f"/>
+            <circle cx="0" cy="15" r="35" fill="#fcecd4"/>
+            <text x="0" y="-40" font-family="SimSun" font-size="36" font-weight="bold" fill="#a63426">法！</text>
+            <text x="0" y="170" font-family="SimHei" font-size="22" fill="#24211d" font-weight="bold" text-anchor="middle">韩非子</text>
+          </g>
+        </g>
+      
+  
+  <g transform="translate(960, 950)">
+    <rect x="-650" y="-45" width="1300" height="72" rx="36" fill="#24211d" opacity="0.90"/>
+    <text x="0" y="5" font-family="Microsoft YaHei, SimHei, sans-serif" font-size="28" font-weight="bold" fill="#ffffff" text-anchor="middle">
+      春秋战国：诸侯打成一锅粥，思想家却吵出了黄金时代。孔子、老子、韩非，各显神通。
+    </text>
+  </g>
+  </svg>
+  
